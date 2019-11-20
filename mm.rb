@@ -1,13 +1,15 @@
 # develop classes here
 
 class Mastermind
-    attr_accessor :turns, :code, :guesses
+    attr_accessor :turns, :code, :guesses, :difficulty
 
     public
     def display_board()
-        i = 1
+        puts "MASTERMIND"
+        2.times {puts ""}
+        i = 0
         for x in @guesses do
-            linefeed = "Round #{i}: "
+            linefeed = "Round #{i+1}: "
             (11-linefeed.length).times do
                 linefeed += " "
             end
@@ -23,6 +25,11 @@ class Mastermind
     end
     
     def validate_guess(guess)
+        if guess.to_s.length == @code.length
+            return true
+        else
+            return false
+        end
     end
 
     def check_guess(guess)
@@ -87,7 +94,6 @@ class Mastermind
         end
         return guesses
     end
-
 end
 
 # Game Flow:
@@ -98,10 +104,15 @@ loop do
     mm.display_board()
     puts ""
     puts "Guess the Code:"
-    guess = gets.chomp
+    guess = gets.chomp.to_i
     puts ""
-    #validate guess
+    while mm.validate_guess(guess) == false
+        puts "You must guess a #{2 + mm.difficulty} digit number!"
+        guess = gets.chomp.to_i
+    end
+    
     mm.check_guess(guess)
+    system "clear"
 end
 
 # Request Input
