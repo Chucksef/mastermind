@@ -3,6 +3,7 @@
 class Mastermind
     attr_accessor :turns, :code, :guesses, :difficulty
 
+
     public
     def display_board()
         puts "MASTERMIND"
@@ -14,7 +15,7 @@ class Mastermind
                 linefeed += " "
             end
             for p in x do
-                linefeed += "___  "
+                linefeed += "#{p}  "
             end
             puts linefeed
             puts ""
@@ -33,6 +34,30 @@ class Mastermind
     end
 
     def check_guess(guess)
+        #if code is correct = WIN!
+        #if not, iterate through guess
+        guess_feedback = []
+        i = 0
+        guess.to_s.length.times do 
+            guessed_digit = guess.to_s[i]
+            code_digit = @code[i]
+            puts "code digit: #{code_digit}"
+            puts "guessed digit: #{guessed_digit}"
+            if guessed_digit.to_i == code_digit
+                puts "right!"
+                @guesses[@turns-1][i] = " #{guessed_digit} "
+            elsif @code.include?(guessed_digit.to_i)
+                puts "wrong place"
+                @guesses[@turns-1][i] = "(#{guessed_digit})"
+            else
+                puts "wrong!"
+                @guesses[@turns-1][i] = "-#{guessed_digit}-"
+            end
+            i += 1
+            # gets.chomp
+        end
+
+
     end
     
     def initialize
@@ -56,13 +81,15 @@ class Mastermind
         puts "MASTERMIND"
         puts ""
         puts "-3-  <--  Number and placement are both wrong"
-        puts "(3)  <--  Number is correct, placement is wrong"
+        puts "(3)  <--  Number is in the code, but placement is wrong"
         puts " 3   <--  Number and placement are both correct"
         puts ""
-        puts "Press any Key to Continue"
-        STDIN.getch
+        puts "Press ENTER to Continue"
+        gets.chomp
+        system "clear"
     end
     
+
     private
 
     def set_difficulty
@@ -90,7 +117,7 @@ class Mastermind
     def generate_guesses_array(len)
         guesses = []
         10.times do
-            guesses << len.times.collect {"_"}
+            guesses << len.times.collect {"___"}
         end
         return guesses
     end
@@ -100,19 +127,18 @@ end
 
 mm = Mastermind.new
 system "clear"
+mm.display_instructions()
 loop do
     mm.display_board()
     puts ""
     puts "Guess the Code:"
-    guess = gets.chomp.to_i
+    guess = gets.chomp
     puts ""
     while mm.validate_guess(guess) == false
         puts "You must guess a #{2 + mm.difficulty} digit number!"
-        guess = gets.chomp.to_i
+        guess = gets.chomp
     end
     
     mm.check_guess(guess)
     system "clear"
 end
-
-# Request Input
