@@ -2,7 +2,7 @@
 
 class Mastermind
     attr_accessor :turns, :code, :guesses, :difficulty
-
+    attr_reader :win
 
     public
     def display_board()
@@ -34,30 +34,26 @@ class Mastermind
     end
 
     def check_guess(guess)
-        #if code is correct = WIN!
-        #if not, iterate through guess
         guess_feedback = []
         i = 0
         guess.to_s.length.times do 
             guessed_digit = guess.to_s[i]
             code_digit = @code[i]
-            puts "code digit: #{code_digit}"
-            puts "guessed digit: #{guessed_digit}"
+            @win = true
+
+            # tests the digits in the guess
             if guessed_digit.to_i == code_digit
-                puts "right!"
                 @guesses[@turns-1][i] = " #{guessed_digit} "
             elsif @code.include?(guessed_digit.to_i)
-                puts "wrong place"
                 @guesses[@turns-1][i] = "(#{guessed_digit})"
+                @win = false
             else
-                puts "wrong!"
                 @guesses[@turns-1][i] = "-#{guessed_digit}-"
+                @win = false
             end
+
             i += 1
-            # gets.chomp
         end
-
-
     end
     
     def initialize
@@ -65,6 +61,7 @@ class Mastermind
         system "clear"
         puts "Welcome to MASTERMIND!"
         puts ""
+        @win = false
         @difficulty = set_difficulty()
         @code = generate_code(@difficulty)
         @guesses = generate_guesses_array(@code.length)
@@ -89,7 +86,6 @@ class Mastermind
         system "clear"
     end
     
-
     private
 
     def set_difficulty
@@ -129,11 +125,13 @@ mm = Mastermind.new
 system "clear"
 mm.display_instructions()
 loop do
+    break if mm.win == true
     mm.display_board()
     puts ""
     puts "Guess the Code:"
     guess = gets.chomp
     puts ""
+
     while mm.validate_guess(guess) == false
         puts "You must guess a #{2 + mm.difficulty} digit number!"
         guess = gets.chomp
@@ -142,3 +140,5 @@ loop do
     mm.check_guess(guess)
     system "clear"
 end
+mm.display_board()
+puts "YOU WIN!"
