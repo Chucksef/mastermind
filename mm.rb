@@ -36,10 +36,10 @@ class Mastermind
     def check_guess(guess)
         guess_feedback = []
         i = 0
+        @win = true
         guess.to_s.length.times do 
             guessed_digit = guess.to_s[i]
             code_digit = @code[i]
-            @win = true
 
             # tests the digits in the guess
             if guessed_digit.to_i == code_digit
