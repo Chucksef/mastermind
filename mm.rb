@@ -1,8 +1,14 @@
+# is_numeric? helper function
+
+def is_numeric? str
+    true if Float(str) rescue false
+end
+
 # develop classes here
 
 class Mastermind
     attr_accessor :turns, :code, :guesses, :difficulty
-    attr_reader :win
+    attr_reader :win, :lose
 
     public
     def display_board()
@@ -21,12 +27,10 @@ class Mastermind
             puts ""
             i += 1
         end
-
-        @turns += 1
     end
     
     def validate_guess(guess)
-        if guess.to_s.length == @code.length
+        if guess.to_s.length == @code.length && is_numeric?(guess)
             return true
         else
             return false
@@ -34,26 +38,27 @@ class Mastermind
     end
 
     def check_guess(guess)
-        guess_feedback = []
         i = 0
         @win = true
         guess.to_s.length.times do 
             guessed_digit = guess.to_s[i]
             code_digit = @code[i]
-
+            
             # tests the digits in the guess
             if guessed_digit.to_i == code_digit
-                @guesses[@turns-1][i] = " #{guessed_digit} "
+                @guesses[@turns][i] = " #{guessed_digit} "
             elsif @code.include?(guessed_digit.to_i)
-                @guesses[@turns-1][i] = "(#{guessed_digit})"
+                @guesses[@turns][i] = "(#{guessed_digit})"
                 @win = false
             else
-                @guesses[@turns-1][i] = "-#{guessed_digit}-"
+                @guesses[@turns][i] = "-#{guessed_digit}-"
                 @win = false
             end
-
+            
             i += 1
         end
+        @turns += 1
+        @lose = true if @turns == 10
     end
     
     def initialize
@@ -125,7 +130,7 @@ mm = Mastermind.new
 system "clear"
 mm.display_instructions()
 loop do
-    break if mm.win == true
+    break if mm.win == true || mm.lose == true
     mm.display_board()
     puts ""
     puts "Guess the Code:"
@@ -141,4 +146,5 @@ loop do
     system "clear"
 end
 mm.display_board()
-puts "YOU WIN!"
+puts "YOU WIN!" if mm.win == true
+puts "you lose... :(" if mm.lose == true && mm.win == false
